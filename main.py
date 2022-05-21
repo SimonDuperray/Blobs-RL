@@ -109,9 +109,9 @@ def run_blobs():
             plt.suptitle(f'Blobs Environment - Iteration #{i+1}')
             plt.scatter(player.x, player.y, s=100, marker='>', color="blue", label="player")
             plt.scatter(enemy.x, enemy.y, s=100, marker='s', color="red", label="enemy")
-            plt.scatter(food.x, food.y, s=100, marker='o', color="green", label="food")
             enemy_border = plt.Circle((enemy.x, enemy.y), ENEMY_RANGE, color="red", fill=False)
             plt.gcf().gca().add_artist(enemy_border)
+            plt.scatter(food.x, food.y, s=100, marker='o', color="green", label="food")
             # plt.gcf().gca().set_aspect(1)
             plt.plot(px_path, py_path, color="blue", alpha=0.4)
             plt.plot(ex_path, ey_path, color="red", linestyle="dashed", alpha=0.4)
@@ -126,19 +126,10 @@ def run_blobs():
             plt.pause(0.05)
             plt.clf()
 
-         # if episode % SHOW_EVERY == 0:
-         #    plt.suptitle("reward")
-         #    plt.plot(rewards_plot, color="blue", label="player")
-         #    plt.savefig(f"./reward-{int(time.time())}.png")
 
-         #    plt.suptitle("time in range")
-         #    plt.plot(times_in_range_plot, color='r')
-         #    plt.savefig(f'./time-in-range-{int(time.time())}.png')
-
-
-         episode_reward += reward
-         if reward==FOOD_REWARD or reward==-ENEMY_PENALTY or reward==-ENEMY_RANGE_PENALTY*ALLOWED_TIME_IN_RANGE:
-            break
+      episode_reward += reward
+      if reward==FOOD_REWARD or reward==-ENEMY_PENALTY or reward==-ENEMY_RANGE_PENALTY*ALLOWED_TIME_IN_RANGE:
+         break
 
       episode_rewards.append(episode_reward)
       epsilon*=EPS_DECAY
