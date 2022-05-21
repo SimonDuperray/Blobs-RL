@@ -1,8 +1,8 @@
 from telnetlib import NEW_ENVIRON
 from Blob import Blob
 from BlobTypes import BlobTypes
-from matplotlib.animation import FuncAnimation
 import matplotlib.pyplot as plt, time, numpy as np, pickle, math
+
 plt.style.use('ggplot')
 
 SIZE = 10
@@ -12,7 +12,7 @@ ENEMY_PENALTY = 300
 ENEMY_RANGE_PENALTY = 150
 FOOD_REWARD = 25
 EPS_DECAY = 0.9998
-SHOW_EVERY = 1000
+SHOW_EVERY = 2000
 LEARNING_RATE = 0.1
 DISCOUNT = 0.95
 PLAYER_N = 1
@@ -57,6 +57,10 @@ def run_blobs():
 
       episode_reward = 0
       px_path, py_path, ex_path, ey_path = [], [], [], []
+      rewards_plot = []
+      time_in_range = 0
+      times_in_range_plot = []
+
       for i in range(200):
          obs = (player-food, player-enemy)
          if np.random.random() > epsilon:
@@ -75,11 +79,15 @@ def run_blobs():
          if player.x==enemy.x and player.y==enemy.y:
             reward = -ENEMY_PENALTY
          elif is_in_circle(enemy.x, enemy.y, player.x, player.y):
+            time_in_range+=1
+            times_in_range_plot.append(time_in_range)
             reward = -ENEMY_RANGE_PENALTY
          elif player.x==food.x and player.y==food.y:
             reward = FOOD_REWARD
          else:
             reward = -MOOVE_PENALTY
+
+         rewards_plot.append(reward)
 
          new_obs = (player-food, player-enemy)
          max_future_q = np.max(q_table[new_obs])
@@ -96,8 +104,9 @@ def run_blobs():
          
          q_table[obs][action] = new_q
 
+      
          if show:
-            plt.title(f'Blobs Environment #{i+1}')
+            plt.suptitle(f'Blobs Environment - Iteration #{i+1}')
             plt.scatter(player.x, player.y, s=100, marker='>', color="blue", label="player")
             plt.scatter(enemy.x, enemy.y, s=100, marker='s', color="red", label="enemy")
             plt.scatter(food.x, food.y, s=100, marker='o', color="green", label="food")
@@ -117,9 +126,20 @@ def run_blobs():
             plt.pause(0.05)
             plt.clf()
 
+         # if episode % SHOW_EVERY == 0:
+         #    plt.suptitle("reward")
+         #    plt.plot(rewards_plot, color="blue", label="player")
+         #    plt.savefig(f"./reward-{int(time.time())}.png")
+
+         #    plt.suptitle("time in range")
+         #    plt.plot(times_in_range_plot, color='r')
+         #    plt.savefig(f'./time-in-range-{int(time.time())}.png')
+
+
          episode_reward += reward
          if reward==FOOD_REWARD or reward==-ENEMY_PENALTY or reward==-ENEMY_RANGE_PENALTY*ALLOWED_TIME_IN_RANGE:
             break
+
       episode_rewards.append(episode_reward)
       epsilon*=EPS_DECAY
 
