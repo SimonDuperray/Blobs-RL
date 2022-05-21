@@ -7,12 +7,12 @@ plt.style.use('ggplot')
 
 SIZE = 10
 HM_EPISODES = 25000
-moove_PENALTY = 1
+MOOVE_PENALTY = 1
 ENEMY_PENALTY = 300
 ENEMY_RANGE_PENALTY = 150
 FOOD_REWARD = 25
 EPS_DECAY = 0.9998
-SHOW_EVERY = 5000
+SHOW_EVERY = 1000
 LEARNING_RATE = 0.1
 DISCOUNT = 0.95
 PLAYER_N = 1
@@ -56,6 +56,7 @@ def run_blobs():
          show = False
 
       episode_reward = 0
+      px_path, py_path, ex_path, ey_path = [], [], [], []
       for i in range(200):
          obs = (player-food, player-enemy)
          if np.random.random() > epsilon:
@@ -64,18 +65,21 @@ def run_blobs():
             action = np.random.randint(0, 4)
 
          player.action(action)
+         px_path.append(player.x)
+         py_path.append(player.y)
 
          enemy.moove()
+         ex_path.append(enemy.x)
+         ey_path.append(enemy.y)
 
          if player.x==enemy.x and player.y==enemy.y:
             reward = -ENEMY_PENALTY
          elif is_in_circle(enemy.x, enemy.y, player.x, player.y):
-            # print("player in enemy range")
             reward = -ENEMY_RANGE_PENALTY
          elif player.x==food.x and player.y==food.y:
             reward = FOOD_REWARD
          else:
-            reward = -moove_PENALTY
+            reward = -MOOVE_PENALTY
 
          new_obs = (player-food, player-enemy)
          max_future_q = np.max(q_table[new_obs])
@@ -91,7 +95,7 @@ def run_blobs():
             new_q = (1-LEARNING_RATE)*current_q+LEARNING_RATE*(reward+DISCOUNT*max_future_q)
          
          q_table[obs][action] = new_q
-         
+
          if show:
             plt.title(f'Blobs Environment #{i+1}')
             plt.scatter(player.x, player.y, s=100, marker='>', color="blue", label="player")
@@ -99,7 +103,9 @@ def run_blobs():
             plt.scatter(food.x, food.y, s=100, marker='o', color="green", label="food")
             enemy_border = plt.Circle((enemy.x, enemy.y), ENEMY_RANGE, color="red", fill=False)
             plt.gcf().gca().add_artist(enemy_border)
-            plt.gcf().gca().set_aspect(1)
+            # plt.gcf().gca().set_aspect(1)
+            plt.plot(px_path, py_path, color="blue", alpha=0.4)
+            plt.plot(ex_path, ey_path, color="red", linestyle="dashed", alpha=0.4)
             plt.legend(loc="upper left")
             plt.plot([0, 0], [10, 0], color="black", linewidth=2)
             plt.plot([10, 0], [10, 10], color="black", linewidth=2)
