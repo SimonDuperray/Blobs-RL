@@ -91,6 +91,7 @@ def run_blobs():
             new_q = (1-LEARNING_RATE)*current_q+LEARNING_RATE*(reward+DISCOUNT*max_future_q)
          
          q_table[obs][action] = new_q
+         
          if show:
             plt.title(f'Blobs Environment #{i+1}')
             plt.scatter(player.x, player.y, s=100, marker='>', color="blue", label="player")
@@ -98,6 +99,7 @@ def run_blobs():
             plt.scatter(food.x, food.y, s=100, marker='o', color="green", label="food")
             enemy_border = plt.Circle((enemy.x, enemy.y), ENEMY_RANGE, color="red", fill=False)
             plt.gcf().gca().add_artist(enemy_border)
+            plt.gcf().gca().set_aspect(1)
             plt.legend(loc="upper left")
             plt.plot([0, 0], [10, 0], color="black", linewidth=2)
             plt.plot([10, 0], [10, 10], color="black", linewidth=2)
