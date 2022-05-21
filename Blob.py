@@ -1,28 +1,29 @@
 import numpy as np
 
 class Blob:
-   def __init__(self, size):
+   def __init__(self, size, type):
       self.size = size
       self.x = np.random.randint(0, self.size)
       self.y = np.random.randint(0, self.size)
+      self.type = type
 
    def __str__(self):
-      return f"({self.x}, {self.y})"
+      return f"[{self.type}]: ({self.x}, {self.y})"
 
    def __sub__(self, blob):
       return (self.x-blob.x, self.y-blob.y)
 
    def action(self, choice):
       if choice==0:
-         self.move(x=1, y=1)
+         self.moove(x=1, y=1)
       elif choice==1:
-         self.move(x=-1, y=-1)
+         self.moove(x=-1, y=-1)
       elif choice==2:
-         self.move(x=-1, y=1)
+         self.moove(x=-1, y=1)
       elif choice==3:
-         self.move(x=1, y=-1)
+         self.moove(x=1, y=-1)
 
-   def move(self, x=False, y=False):
+   def moove(self, x=False, y=False):
       if not x:
          self.x+=np.random.randint(-1, 2)
       else:
