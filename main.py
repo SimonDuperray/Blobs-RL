@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt, time, numpy as np, pickle, math
 plt.style.use('ggplot')
 
 SIZE = 10
-HM_EPISODES = 25000
+HM_EPISODES = 30000
 MOOVE_PENALTY = 1
 ENEMY_PENALTY = 300
 ENEMY_RANGE_PENALTY = 150
@@ -46,6 +46,7 @@ def run_blobs():
       
       player = Blob(size=SIZE, type=BlobTypes.PLAYER)
       enemy = Blob(size=SIZE, type=BlobTypes.ENEMY)
+      # enemies = [Blob(size=SIZE, type=BlobTypes.ENEMY, idx=0), Blob(size=SIZE, type=BlobTypes.ENEMY, idx=1)]
       food = Blob(size=SIZE, type=BlobTypes.FOOD)
 
       if episode % SHOW_EVERY == 0:
@@ -56,12 +57,15 @@ def run_blobs():
          show = False
 
       episode_reward = 0
-      px_path, py_path, ex_path, ey_path = [], [], [], []
+      px_path, py_path = [], []
+      ex_path, ey_path = [], []
+      # enemies_position = [[] for _ in range(len(enemies))]
       rewards_plot = []
       time_in_range = 0
       times_in_range_plot = []
 
       for i in range(200):
+         # for enemy in enemies:
          obs = (player-food, player-enemy)
          if np.random.random() > epsilon:
             action = np.argmax(q_table[obs])
@@ -75,6 +79,7 @@ def run_blobs():
          enemy.moove()
          ex_path.append(enemy.x)
          ey_path.append(enemy.y)
+         # enemies_position[enemy.idx].append((enemy.x, enemy.y))
 
          if player.x==enemy.x and player.y==enemy.y:
             reward = -ENEMY_PENALTY
@@ -111,10 +116,16 @@ def run_blobs():
             plt.scatter(enemy.x, enemy.y, s=100, marker='s', color="red", label="enemy")
             enemy_border = plt.Circle((enemy.x, enemy.y), ENEMY_RANGE, color="red", fill=False)
             plt.gcf().gca().add_artist(enemy_border)
+            # for enemy in enemies:
+               # plt.scatter(enemy.x, enemy.y, s=100, marker='s', color="red", label="enemy")
+               # enemy_border = plt.Circle((enemy.x, enemy.y), ENEMY_RANGE, color="red", fill=False)
+               # plt.gcf().gca().add_artist(enemy_border)
             plt.scatter(food.x, food.y, s=100, marker='o', color="green", label="food")
             # plt.gcf().gca().set_aspect(1)
             plt.plot(px_path, py_path, color="blue", alpha=0.4)
             plt.plot(ex_path, ey_path, color="red", linestyle="dashed", alpha=0.4)
+            # for enemy in enemies_position:
+            #    plt.plot(enemy, enemy., color="red", linestyle="dashed", alpha=0.4)
             plt.legend(loc="upper left")
             plt.plot([0, 0], [10, 0], color="black", linewidth=2)
             plt.plot([10, 0], [10, 10], color="black", linewidth=2)
@@ -127,21 +138,13 @@ def run_blobs():
             plt.clf()
 
 
-      episode_reward += reward
-      if reward==FOOD_REWARD or reward==-ENEMY_PENALTY or reward==-ENEMY_RANGE_PENALTY*ALLOWED_TIME_IN_RANGE:
-         break
+         episode_reward += reward
+         if reward==FOOD_REWARD or reward==-ENEMY_PENALTY or reward==-ENEMY_RANGE_PENALTY*ALLOWED_TIME_IN_RANGE:
+            break
 
       episode_rewards.append(episode_reward)
       epsilon*=EPS_DECAY
 
-   moving_avg = np.convolve(episode_rewards, np.ones((SHOW_EVERY,))/SHOW_EVERY, mode="valid")
-   plt.plot([i for i in range(len(moving_avg))], moving_avg)
-   plt.ylabel(f"reward {SHOW_EVERY} ma")
-   plt.xlabel("episode #")
-   plt.show()
-
-   with open(f"./q_tables/qtable-{int(time.time())}.pickle", "wb") as f:
-      pickle.dump(q_table, f)
 
 
 def test():

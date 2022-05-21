@@ -1,11 +1,12 @@
 import numpy as np
 
 class Blob:
-   def __init__(self, size, type):
+   def __init__(self, size, type, idx=None):
       self.size = size
       self.x = np.random.randint(0, self.size)
       self.y = np.random.randint(0, self.size)
       self.type = type
+      self.idx = idx
 
    def __str__(self):
       return f"[{self.type}]: ({self.x}, {self.y})"
