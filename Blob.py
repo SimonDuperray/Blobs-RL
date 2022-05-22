@@ -1,12 +1,20 @@
 import numpy as np
+from BlobTypes import BlobTypes
 
 class Blob:
-   def __init__(self, size, type, idx=None):
+   def __init__(self, size, blob_type, idx=None):
       self.size = size
-      self.x = np.random.randint(0, self.size)
-      self.y = np.random.randint(0, self.size)
-      self.type = type
+      self.blob_type = blob_type
       self.idx = idx
+      if self.blob_type==BlobTypes.PLAYER:
+         self.x = 0
+         self.y = 0
+      if self.blob_type==BlobTypes.FOOD:
+         self.x = 9
+         self.y = 9
+      if self.blob_type==BlobTypes.ENEMY:
+         self.x = np.random.randint(0, self.size)
+         self.y = np.random.randint(0, self.size)
 
    def __str__(self):
       return f"[{self.type}]: ({self.x}, {self.y})"

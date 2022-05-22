@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt, time, numpy as np, pickle, math
 plt.style.use('ggplot')
 
 SIZE = 10
-HM_EPISODES = 30000
+HM_EPISODES = 100000
 MOOVE_PENALTY = 1
 ENEMY_PENALTY = 300
 ENEMY_RANGE_PENALTY = 150
@@ -43,10 +43,10 @@ def run_blobs():
    episode_rewards = []
    for episode in range(HM_EPISODES):
       
-      player = Blob(size=SIZE, type=BlobTypes.PLAYER)
-      enemy = Blob(size=SIZE, type=BlobTypes.ENEMY)
+      player = Blob(size=SIZE, blob_type=BlobTypes.PLAYER)
+      enemy = Blob(size=SIZE, blob_type=BlobTypes.ENEMY)
       # enemies = [Blob(size=SIZE, type=BlobTypes.ENEMY, idx=0), Blob(size=SIZE, type=BlobTypes.ENEMY, idx=1)]
-      food = Blob(size=SIZE, type=BlobTypes.FOOD)
+      food = Blob(size=SIZE, blob_type=BlobTypes.FOOD)
 
       if episode % SHOW_EVERY == 0:
          print(f"on #{episode}, epsilon is {epsilon}")
@@ -75,9 +75,9 @@ def run_blobs():
          px_path.append(player.x)
          py_path.append(player.y)
 
-         enemy.moove()
-         ex_path.append(enemy.x)
-         ey_path.append(enemy.y)
+         # enemy.moove()
+         # ex_path.append(enemy.x)
+         # ey_path.append(enemy.y)
          # enemies_position[enemy.idx].append((enemy.x, enemy.y))
 
          if player.x==enemy.x and player.y==enemy.y:
@@ -122,7 +122,7 @@ def run_blobs():
             plt.scatter(food.x, food.y, s=100, marker='o', color="green", label="food")
             # plt.gcf().gca().set_aspect(1)
             plt.plot(px_path, py_path, color="blue", alpha=0.4)
-            plt.plot(ex_path, ey_path, color="red", linestyle="dashed", alpha=0.4)
+            # plt.plot(ex_path, ey_path, color="red", linestyle="dashed", alpha=0.4)
             # for enemy in enemies_position:
             #    plt.plot(enemy, enemy., color="red", linestyle="dashed", alpha=0.4)
             plt.legend(loc="upper left")
