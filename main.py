@@ -1,4 +1,3 @@
-from telnetlib import NEW_ENVIRON
 from Blob import Blob
 from BlobTypes import BlobTypes
 import matplotlib.pyplot as plt, time, numpy as np, pickle, math
